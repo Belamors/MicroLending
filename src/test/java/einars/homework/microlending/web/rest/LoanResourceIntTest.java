@@ -50,8 +50,8 @@ public class LoanResourceIntTest {
     private static final LocalDate DEFAULT_TERM = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_TERM = LocalDate.now(ZoneId.systemDefault());
 
-    private static final String DEFAULT_IP = "1\\d\\d\\<254\\*252\\o23\\d";
-    private static final String UPDATED_IP = "254\\4251\\s21\\d\\t255";
+    private static final String DEFAULT_IP = "1.1.1.1";
+    private static final String UPDATED_IP = "2.2.2.2";
 
     @Autowired
     private LoanRepository loanRepository;

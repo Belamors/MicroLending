@@ -35,7 +35,7 @@ public class LoanResource {
 	}
 
 	/**
-	 * POST /loans : Create a new loan.
+	 * POST /loan : Create a new loan.
 	 *
 	 * @param loan
 	 *            the loan to create
@@ -59,7 +59,7 @@ public class LoanResource {
 	}
 
 	/**
-	 * PUT /loans : Updates an existing loan.
+	 * PUT /update-loan : Updates an existing loan.
 	 *
 	 * @param loan
 	 *            the loan to update
