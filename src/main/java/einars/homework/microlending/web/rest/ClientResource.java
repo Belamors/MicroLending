@@ -2,11 +2,10 @@ package einars.homework.microlending.web.rest;
 
 import einars.homework.microlending.domain.Client;
 import einars.homework.microlending.repository.ClientRepository;
-import einars.homework.microlending.web.rest.util.HeaderUtil;
-import einars.homework.microlending.web.rest.util.ResponseUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +20,9 @@ import java.util.Optional;
  * REST controller for managing Client.
  */
 @RestController
-@RequestMapping("/api")
 public class ClientResource {
 
     private final Logger log = LoggerFactory.getLogger(ClientResource.class);
-
-    private static final String ENTITY_NAME = "client";
 
     private final ClientRepository clientRepository;
 
@@ -45,11 +41,10 @@ public class ClientResource {
     public ResponseEntity<Client> createClient(@Valid @RequestBody Client client) throws URISyntaxException {
         log.debug("REST request to save Client : {}", client);
         if (client.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new client cannot already have an ID")).body(null);
+            return ResponseEntity.badRequest().body(null);
         }
         Client result = clientRepository.save(client);
-        return ResponseEntity.created(new URI("/api/clients/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+        return ResponseEntity.created(new URI("/clients/" + result.getId()))
             .body(result);
     }
 
@@ -70,7 +65,6 @@ public class ClientResource {
         }
         Client result = clientRepository.save(client);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, client.getId().toString()))
             .body(result);
     }
 
@@ -95,7 +89,8 @@ public class ClientResource {
     public ResponseEntity<Client> getClient(@PathVariable Long id) {
         log.debug("REST request to get Client : {}", id);
         Client client = clientRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(client));
+        return Optional.ofNullable(client).map(response -> ResponseEntity.ok().body(response))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -108,6 +103,6 @@ public class ClientResource {
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         log.debug("REST request to delete Client : {}", id);
         clientRepository.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        return ResponseEntity.ok().build();
     }
 }

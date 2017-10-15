@@ -33,7 +33,6 @@ public class Loan implements Serializable {
     private LocalDate term;
 
     @NotNull
-    //@Pattern(regexp = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$")
     @Column(name = "ip", nullable = false)
     private String ip;
 
@@ -41,7 +40,6 @@ public class Loan implements Serializable {
     @NotNull
     private Client client;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -114,7 +112,6 @@ public class Loan implements Serializable {
     public void setClient(Client client) {
         this.client = client;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

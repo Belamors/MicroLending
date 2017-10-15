@@ -87,7 +87,7 @@ public class ClientResourceIntTest {
         int databaseSizeBeforeCreate = clientRepository.findAll().size();
 
         // Create the Client
-        restClientMockMvc.perform(post("/api/clients")
+        restClientMockMvc.perform(post("/clients")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(client)))
             .andExpect(status().isCreated());
@@ -108,7 +108,7 @@ public class ClientResourceIntTest {
         client.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restClientMockMvc.perform(post("/api/clients")
+        restClientMockMvc.perform(post("/clients")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(client)))
             .andExpect(status().isBadRequest());
@@ -127,7 +127,7 @@ public class ClientResourceIntTest {
 
         // Create the Client, which fails.
 
-        restClientMockMvc.perform(post("/api/clients")
+        restClientMockMvc.perform(post("/clients")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(client)))
             .andExpect(status().isBadRequest());
@@ -143,7 +143,7 @@ public class ClientResourceIntTest {
         clientRepository.saveAndFlush(client);
 
         // Get all the clientList
-        restClientMockMvc.perform(get("/api/clients?sort=id,desc"))
+        restClientMockMvc.perform(get("/clients?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(client.getId().intValue())))
@@ -157,7 +157,7 @@ public class ClientResourceIntTest {
         clientRepository.saveAndFlush(client);
 
         // Get the client
-        restClientMockMvc.perform(get("/api/clients/{id}", client.getId()))
+        restClientMockMvc.perform(get("/clients/{id}", client.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(client.getId().intValue()))
@@ -168,7 +168,7 @@ public class ClientResourceIntTest {
     @Transactional
     public void getNonExistingClient() throws Exception {
         // Get the client
-        restClientMockMvc.perform(get("/api/clients/{id}", Long.MAX_VALUE))
+        restClientMockMvc.perform(get("/clients/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -184,7 +184,7 @@ public class ClientResourceIntTest {
         updatedClient
             .name(UPDATED_NAME);
 
-        restClientMockMvc.perform(put("/api/clients")
+        restClientMockMvc.perform(put("/clients")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedClient)))
             .andExpect(status().isOk());
@@ -204,7 +204,7 @@ public class ClientResourceIntTest {
         // Create the Client
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
-        restClientMockMvc.perform(put("/api/clients")
+        restClientMockMvc.perform(put("/clients")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(client)))
             .andExpect(status().isCreated());
@@ -222,7 +222,7 @@ public class ClientResourceIntTest {
         int databaseSizeBeforeDelete = clientRepository.findAll().size();
 
         // Get the client
-        restClientMockMvc.perform(delete("/api/clients/{id}", client.getId())
+        restClientMockMvc.perform(delete("/clients/{id}", client.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 

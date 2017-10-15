@@ -2,11 +2,10 @@ package einars.homework.microlending.web.rest;
 
 import einars.homework.microlending.domain.LoanExtension;
 import einars.homework.microlending.service.LoanExtensionService;
-import einars.homework.microlending.web.rest.util.HeaderUtil;
-import einars.homework.microlending.web.rest.util.ResponseUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +20,9 @@ import java.util.Optional;
  * REST controller for managing LoanExtension.
  */
 @RestController
-@RequestMapping("/api")
 public class LoanExtensionResource {
 
     private final Logger log = LoggerFactory.getLogger(LoanExtensionResource.class);
-
-    private static final String ENTITY_NAME = "loanExtension";
 
     private final LoanExtensionService loanExtensionService;
 
@@ -43,13 +39,11 @@ public class LoanExtensionResource {
      */
     @PostMapping("/loan-extensions")
     public ResponseEntity<LoanExtension> createLoanExtension(@Valid @RequestBody LoanExtension loanExtension) throws URISyntaxException {
-        log.debug("REST request to save LoanExtension : {}", loanExtension);
         if (loanExtension.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new loanExtension cannot already have an ID")).body(null);
+            return ResponseEntity.badRequest().body(null);
         }
         LoanExtension result = loanExtensionService.save(loanExtension);
-        return ResponseEntity.created(new URI("/api/loan-extensions/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+        return ResponseEntity.created(new URI("/loan-extensions/" + result.getId()))
             .body(result);
     }
 
@@ -64,13 +58,11 @@ public class LoanExtensionResource {
      */
     @PutMapping("/loan-extensions")
     public ResponseEntity<LoanExtension> updateLoanExtension(@Valid @RequestBody LoanExtension loanExtension) throws URISyntaxException {
-        log.debug("REST request to update LoanExtension : {}", loanExtension);
         if (loanExtension.getId() == null) {
             return createLoanExtension(loanExtension);
         }
         LoanExtension result = loanExtensionService.save(loanExtension);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, loanExtension.getId().toString()))
             .body(result);
     }
 
@@ -95,7 +87,8 @@ public class LoanExtensionResource {
     public ResponseEntity<LoanExtension> getLoanExtension(@PathVariable Long id) {
         log.debug("REST request to get LoanExtension : {}", id);
         LoanExtension loanExtension = loanExtensionService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(loanExtension));
+        return Optional.ofNullable(loanExtension).map(response -> ResponseEntity.ok().body(response))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -108,6 +101,6 @@ public class LoanExtensionResource {
     public ResponseEntity<Void> deleteLoanExtension(@PathVariable Long id) {
         log.debug("REST request to delete LoanExtension : {}", id);
         loanExtensionService.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        return ResponseEntity.ok().build();
     }
 }

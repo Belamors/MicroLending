@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: microlending
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: Belamors
+Implementation-Vendor-Id: einars.homework
+Build-Jdk: 1.8.0_131
+Implementation-URL: http://projects.spring.io/spring-boot/microlending
+ /
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

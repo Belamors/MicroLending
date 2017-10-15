@@ -6,6 +6,7 @@ import einars.homework.microlending.domain.Loan;
 import einars.homework.microlending.domain.Client;
 import einars.homework.microlending.repository.LoanRepository;
 import einars.homework.microlending.service.LoanService;
+import einars.homework.microlending.service.RiskAnalizesService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +58,8 @@ public class LoanResourceIntTest {
 
     @Autowired
     private LoanService loanService;
+    @Autowired
+    private RiskAnalizesService riskAnalize;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -74,7 +77,7 @@ public class LoanResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final LoanResource loanResource = new LoanResource(loanService);
+        final LoanResource loanResource = new LoanResource(loanService, riskAnalize);
         this.restLoanMockMvc = MockMvcBuilders.standaloneSetup(loanResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
@@ -111,7 +114,7 @@ public class LoanResourceIntTest {
         int databaseSizeBeforeCreate = loanRepository.findAll().size();
 
         // Create the Loan
-        restLoanMockMvc.perform(post("/api/loans")
+        restLoanMockMvc.perform(post("/loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loan)))
             .andExpect(status().isCreated());
@@ -135,7 +138,7 @@ public class LoanResourceIntTest {
         loan.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restLoanMockMvc.perform(post("/api/loans")
+        restLoanMockMvc.perform(post("/loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loan)))
             .andExpect(status().isBadRequest());
@@ -154,7 +157,7 @@ public class LoanResourceIntTest {
 
         // Create the Loan, which fails.
 
-        restLoanMockMvc.perform(post("/api/loans")
+        restLoanMockMvc.perform(post("/loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loan)))
             .andExpect(status().isBadRequest());
@@ -172,7 +175,7 @@ public class LoanResourceIntTest {
 
         // Create the Loan, which fails.
 
-        restLoanMockMvc.perform(post("/api/loans")
+        restLoanMockMvc.perform(post("/loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loan)))
             .andExpect(status().isBadRequest());
@@ -190,7 +193,7 @@ public class LoanResourceIntTest {
 
         // Create the Loan, which fails.
 
-        restLoanMockMvc.perform(post("/api/loans")
+        restLoanMockMvc.perform(post("/loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loan)))
             .andExpect(status().isBadRequest());
@@ -206,7 +209,7 @@ public class LoanResourceIntTest {
         loanRepository.saveAndFlush(loan);
 
         // Get all the loanList
-        restLoanMockMvc.perform(get("/api/loans?sort=id,desc"))
+        restLoanMockMvc.perform(get("/loans?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(loan.getId().intValue())))
@@ -223,7 +226,7 @@ public class LoanResourceIntTest {
         loanRepository.saveAndFlush(loan);
 
         // Get the loan
-        restLoanMockMvc.perform(get("/api/loans/{id}", loan.getId()))
+        restLoanMockMvc.perform(get("/loans/{id}", loan.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(loan.getId().intValue()))
@@ -237,7 +240,7 @@ public class LoanResourceIntTest {
     @Transactional
     public void getNonExistingLoan() throws Exception {
         // Get the loan
-        restLoanMockMvc.perform(get("/api/loans/{id}", Long.MAX_VALUE))
+        restLoanMockMvc.perform(get("/loans/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -257,7 +260,7 @@ public class LoanResourceIntTest {
             .term(UPDATED_TERM)
             .ip(UPDATED_IP);
 
-        restLoanMockMvc.perform(put("/api/loans")
+        restLoanMockMvc.perform(put("/update-loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedLoan)))
             .andExpect(status().isOk());
@@ -280,7 +283,7 @@ public class LoanResourceIntTest {
         // Create the Loan
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
-        restLoanMockMvc.perform(put("/api/loans")
+        restLoanMockMvc.perform(put("/update-loan")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loan)))
             .andExpect(status().isCreated());
@@ -299,7 +302,7 @@ public class LoanResourceIntTest {
         int databaseSizeBeforeDelete = loanRepository.findAll().size();
 
         // Get the loan
-        restLoanMockMvc.perform(delete("/api/loans/{id}", loan.getId())
+        restLoanMockMvc.perform(delete("/loans/{id}", loan.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 

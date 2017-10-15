@@ -35,7 +35,6 @@ public class Client implements Serializable {
     @JsonIgnore
     private Set<LoanExtension> loanExtensions = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -106,7 +105,6 @@ public class Client implements Serializable {
     public void setLoanExtensions(Set<LoanExtension> loanExtensions) {
         this.loanExtensions = loanExtensions;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

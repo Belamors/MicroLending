@@ -105,7 +105,7 @@ public class LoanExtensionResourceIntTest {
         int databaseSizeBeforeCreate = loanExtensionRepository.findAll().size();
 
         // Create the LoanExtension
-        restLoanExtensionMockMvc.perform(post("/api/loan-extensions")
+        restLoanExtensionMockMvc.perform(post("/loan-extensions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loanExtension)))
             .andExpect(status().isCreated());
@@ -126,7 +126,7 @@ public class LoanExtensionResourceIntTest {
         loanExtension.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restLoanExtensionMockMvc.perform(post("/api/loan-extensions")
+        restLoanExtensionMockMvc.perform(post("/loan-extensions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loanExtension)))
             .andExpect(status().isBadRequest());
@@ -145,7 +145,7 @@ public class LoanExtensionResourceIntTest {
 
         // Create the LoanExtension, which fails.
 
-        restLoanExtensionMockMvc.perform(post("/api/loan-extensions")
+        restLoanExtensionMockMvc.perform(post("/loan-extensions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loanExtension)))
             .andExpect(status().isBadRequest());
@@ -161,7 +161,7 @@ public class LoanExtensionResourceIntTest {
         loanExtensionRepository.saveAndFlush(loanExtension);
 
         // Get all the loanExtensionList
-        restLoanExtensionMockMvc.perform(get("/api/loan-extensions?sort=id,desc"))
+        restLoanExtensionMockMvc.perform(get("/loan-extensions?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(loanExtension.getId().intValue())))
@@ -175,7 +175,7 @@ public class LoanExtensionResourceIntTest {
         loanExtensionRepository.saveAndFlush(loanExtension);
 
         // Get the loanExtension
-        restLoanExtensionMockMvc.perform(get("/api/loan-extensions/{id}", loanExtension.getId()))
+        restLoanExtensionMockMvc.perform(get("/loan-extensions/{id}", loanExtension.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(loanExtension.getId().intValue()))
@@ -186,7 +186,7 @@ public class LoanExtensionResourceIntTest {
     @Transactional
     public void getNonExistingLoanExtension() throws Exception {
         // Get the loanExtension
-        restLoanExtensionMockMvc.perform(get("/api/loan-extensions/{id}", Long.MAX_VALUE))
+        restLoanExtensionMockMvc.perform(get("/loan-extensions/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -203,7 +203,7 @@ public class LoanExtensionResourceIntTest {
         updatedLoanExtension
             .duration(UPDATED_DURATION);
 
-        restLoanExtensionMockMvc.perform(put("/api/loan-extensions")
+        restLoanExtensionMockMvc.perform(put("/loan-extensions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedLoanExtension)))
             .andExpect(status().isOk());
@@ -223,7 +223,7 @@ public class LoanExtensionResourceIntTest {
         // Create the LoanExtension
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
-        restLoanExtensionMockMvc.perform(put("/api/loan-extensions")
+        restLoanExtensionMockMvc.perform(put("/loan-extensions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(loanExtension)))
             .andExpect(status().isCreated());
@@ -242,7 +242,7 @@ public class LoanExtensionResourceIntTest {
         int databaseSizeBeforeDelete = loanExtensionRepository.findAll().size();
 
         // Get the loanExtension
-        restLoanExtensionMockMvc.perform(delete("/api/loan-extensions/{id}", loanExtension.getId())
+        restLoanExtensionMockMvc.perform(delete("/loan-extensions/{id}", loanExtension.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 

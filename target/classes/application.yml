@@ -1,0 +1,19 @@
+maxAmount: 1000
+spring:
+  jackson:
+    date-format: "YYYY-MM-dd"
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+bucket4j:
+  enabled: true
+  filters:
+  - cache-name: buckets   
+    filter-method: servlet 
+    url: /loan
+    rate-limits:
+    - filter-key-type: ip
+      bandwidths:
+      - capacity: 3
+        time: 1
+        unit: days
